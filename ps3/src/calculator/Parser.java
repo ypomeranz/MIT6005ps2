@@ -158,7 +158,7 @@ class Parser {
 					throw new ParserException("Syntax error in second part of an expression!");
 				}
 			} else if (stage == 4){
-				throw new ParserException();
+				throw new ParserException("Tokens left at the end of expression");
 			}
 
 			
@@ -167,6 +167,11 @@ class Parser {
 		}
 		//evaluate the expression and return a Value
 		//four cases - one for each operation
+		if (stage == 1){
+			return firstvalue;
+		} else if (stage == 2){
+			throw new ParserException("No value after operand");
+		}
 		if (operator.charAt(0) == '+'){
 			double answervalue = firstvalue.value + secondvalue.value;
 			if (firstvalue.type ==  ValueType.SCALAR && secondvalue.type == ValueType.SCALAR){
