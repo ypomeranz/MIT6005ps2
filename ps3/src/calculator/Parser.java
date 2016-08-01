@@ -25,6 +25,13 @@ class Parser {
 	
 	@SuppressWarnings("serial")
 	static class ParserException extends RuntimeException {
+		public ParserException(){
+			super();
+		}
+		public ParserException(String s){
+			super(s);
+		}
+		
 	}
 
 	/**
@@ -116,7 +123,7 @@ class Parser {
 					}
 				} else {
 					//illegal expression - raise error - until I implement exceptions, working with a print statement
-					throw new RuntimeException("Error! First part of expression invalid!");
+					throw new ParserException("Error! First part of expression invalid!");
 				}
 				nooperator = true;
 			} else if (stage == 2){
@@ -127,7 +134,7 @@ class Parser {
 					tokens.remove(0);
 				} else {
 					//invalid expression
-					throw new RuntimeException("Problem with the Syntax! Expected operator!");
+					throw new ParserException("Problem with the Syntax! Expected operator!");
 				}
 			} else if (stage == 3){
 				//evaluate the second part of the expression
@@ -148,7 +155,7 @@ class Parser {
 					}
 				} else {
 					//illegal expression - raise error - until I implement exceptions, working with a print statement
-					throw new RuntimeException("Syntax error in second part of an expression!");
+					throw new ParserException("Syntax error in second part of an expression!");
 				}
 			} else if (stage == 4){
 				throw new ParserException();
@@ -207,7 +214,7 @@ class Parser {
 			if (secondvalue.value == (double)0.0){
 				//raise a divide by zero error
 				//System.out.println("Divide by zero error!");
-				throw new RuntimeException("Divide by zero error");
+				throw new ParserException("Divide by zero error");
 			}
 			
 			double answervalue = firstvalue.value / secondvalue.value;

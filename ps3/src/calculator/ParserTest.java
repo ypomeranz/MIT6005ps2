@@ -53,6 +53,30 @@ public static void testParser(){
     Parser.Value value5 = test05.evaluate(test05.alltokens);
     System.out.println(value5.value);
     System.out.println(value5.type);
+    
+    //Test 6 - Testing an invalid expression
+    System.out.println("Test 6: Expected Parser Error");
+    System.out.println("Input: 3 + -2");
+    try {
+        Parser test06 = new Parser(new Lexer("3 + -2"));
+        Parser.Value value6 = test06.evaluate(test06.alltokens);
+        System.out.println("test failed - no exception occurred");
+    } catch (Parser.ParserException p){
+        System.out.println("Success! Parser exception occurred");
+    }
+    
+    //Test 7 - Divide by zero error
+    System.out.println("Test 7: Expected Parser Error");
+    System.out.println("Input: 3/0");
+    try {
+        Parser test07 = new Parser(new Lexer("3/0"));
+        Parser.Value value7 = test07.evaluate(test07.alltokens);
+        System.out.println("test failed - no exception occurred");
+    } catch (Parser.ParserException p){
+        System.out.println(p.getMessage());
+        System.out.println("Success! Parser exception occurred");
+    }
+    
 
 }
 }
