@@ -178,6 +178,11 @@ class Parser {
 				answer = new Value(answervalue, ValueType.SCALAR);
 			} else if ((firstvalue.type == ValueType.INCHES | secondvalue.type == ValueType.INCHES) 
 							&& (firstvalue.type!=ValueType.POINTS && secondvalue.type!=ValueType.POINTS)){
+				if (firstvalue.type == ValueType.SCALAR){
+					answervalue = firstvalue.value*PT_PER_IN + secondvalue.value;
+				} else {
+					answervalue = firstvalue.value + secondvalue.value*PT_PER_IN;
+				}
 				answer = new Value(answervalue, ValueType.INCHES);	
 			} else if ((firstvalue.type==ValueType.POINTS | secondvalue.type == ValueType.POINTS) 
 							&& firstvalue.type != ValueType.INCHES && secondvalue.type != ValueType.INCHES){
@@ -193,6 +198,11 @@ class Parser {
 				answer = new Value(answervalue, ValueType.SCALAR);
 			} else if ((firstvalue.type == ValueType.INCHES | secondvalue.type == ValueType.INCHES) 
 							&& firstvalue.type!=ValueType.POINTS && secondvalue.type!=ValueType.POINTS){
+				if (firstvalue.type == ValueType.SCALAR){
+					answervalue = firstvalue.value*PT_PER_IN - secondvalue.value;
+				} else {
+					answervalue = firstvalue.value - secondvalue.value*PT_PER_IN;
+				}
 				answer = new Value(answervalue, ValueType.INCHES);	
 			} else if ((firstvalue.type==ValueType.POINTS | secondvalue.type == ValueType.POINTS) 
 							&& firstvalue.type != ValueType.INCHES && secondvalue.type != ValueType.INCHES){
