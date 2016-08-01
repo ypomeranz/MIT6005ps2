@@ -30,6 +30,10 @@ public class Lexer {
 	@SuppressWarnings("serial")
 	static class TokenMismatchException extends Exception {
 	}
+	
+	static class BadTokenException extends RuntimeException{
+		
+	}
 
 	// TODO write method spec
 	public Lexer(String s) {
@@ -82,7 +86,7 @@ public class Lexer {
 				i++;
 				return new Token(Type.UNIT, "in");
 			} else {
-				System.out.println("Invalid character");
+				throw new BadTokenException();
 			}
 			
 		} else if (onechar.charAt(0) == 'p'){
@@ -91,12 +95,12 @@ public class Lexer {
 				i++;
 				return new Token(Type.UNIT, "pt");
 			} else {
-				System.out.println("invalid character");
+				throw new BadTokenException();
 			}
 		} else {
-			//For now - until I have an error to raise implemented
-			System.out.println("Invalid character found - attempting to continue ignoring character");
-			i++;
+			
+			throw new BadTokenException();
+			
 		}
 			
 		

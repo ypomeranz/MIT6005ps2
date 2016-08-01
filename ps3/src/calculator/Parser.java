@@ -5,15 +5,10 @@ import calculator.Lexer.Token;
 import java.util.ArrayList;
 
 /*
- * TODO define your grammar from problem 1 here
-Expression ::= (Openparen? Number Unit? Operator Number Unit? Closeparen?)  | 
-				(Openparen Expression Closeparen Unit) | 
-				(Openparen Expression Closeparen Operator Number Unit?) |
-				(Number Unit? Operator Openparen Expression Closeparen) |
-				(Openparen Expression Closeparen Operator Openparen Expression Closeparen)
-				
+Expression ::= (Value Operator Value) | Value
+Value ::= (Number Unit?) | (Openparen Expression Closeparen Unit?)
 Openparen ::= (
-Number ::= Digit+ (. Digit+)
+Number ::= Digit+ (. Digit+)?
 Digit :: = 0|1|2|3|4|5|6|7|8|9
 Unit ::= in | pt
 Operator ::= + | - | * | /
@@ -68,8 +63,11 @@ class Parser {
 	private final Lexer lexer;
 	public ArrayList<Token> alltokens;
 
-	// TODO write method spec
-	/* input a lexer, which will give you tokens based on next 
+
+	/* 
+	Constructor for Parser object
+	@param lexer - lexer to prepare for parsing 
+	mutates lexer so that it reaches EOF
 	*/ 
 	Parser(Lexer lexer) {
 		this.lexer = lexer;
@@ -82,16 +80,20 @@ class Parser {
 		alltokens=fulltokenlist;
 	}
 
-	// TODO write method spec
-	// call with an expression to evaluate - keep recursively calling until you have an answer
-	// note to self trying to adjust to have code work by mutating the array - beware of code from the older method
+	/*
+	Evaluates Parser.alltokens
+	@param tokens ArrayList of tokens to parse
+	@returns answer - Value containing the value of the expression represented by tokens and the final units
+	mutates tokens - results in an empty ArrayList
+	*/
 	public Value evaluate(ArrayList<Token> tokens) {
 		int stage = 0;
 		String operator = new String();
-		Value firstvalue=new Value(0, ValueType.SCALAR);
-		Value secondvalue=new Value(0, ValueType.SCALAR);
-		Value answer = new Value(0, ValueType.SCALAR);
-		while (tokens.size()>0 && stage < 3){
+		Value firstvalue=null;
+		Value secondvalue=null;
+		Value answer = null;
+		boolean nooperator = false;
+		while (tokens.size()>0 && stage <= 3){
 			stage++;
 			
 			if (stage == 1){
@@ -114,16 +116,18 @@ class Parser {
 					}
 				} else {
 					//illegal expression - raise error - until I implement exceptions, working with a print statement
-					System.out.println("Error! First part of expression invalid!");
+					throw new RuntimeException("Error! First part of expression invalid!");
 				}
+				nooperator = true;
 			} else if (stage == 2){
+				nooperator = false;
 				if (tokens.get(0).type==Type.OPERATOR){
 					//save the operator
 					operator = tokens.get(0).text;
 					tokens.remove(0);
 				} else {
 					//invalid expression
-					System.out.println("Problem with the Syntax! Expected operator!");
+					throw new RuntimeException("Problem with the Syntax! Expected operator!");
 				}
 			} else if (stage == 3){
 				//evaluate the second part of the expression
@@ -144,14 +148,14 @@ class Parser {
 					}
 				} else {
 					//illegal expression - raise error - until I implement exceptions, working with a print statement
-					System.out.println("Error getting second part of expression!");
+					throw new RuntimeException("Syntax error in second part of an expression!");
 				}
-			} 
+			} else if (stage == 4){
+				throw new ParserException();
+			}
 
 			
-		//if we get to this point, raise an error - we ran through the whole list, but didn't find a complete expression	
-		//i wrote a return statement because java wanted it - hope this isn't crazy
-		//throw new RuntimeException("Error - failed to compute");
+
 		
 		}
 		//evaluate the expression and return a Value
@@ -219,6 +223,9 @@ class Parser {
 			}
 			
 		}
+		if (nooperator == true){
+			answer = firstvalue;
+		}
 		return answer;
 		
 	}
@@ -260,7 +267,7 @@ class Parser {
 		ArrayList<Token> sublist = new ArrayList<Token>();
 		tokens.remove(0);
 		boolean closedparen = false;
-		while (parencount != 0 | closedparen == false){
+		while (tokens.size()>0){
 			Token x = tokens.get(0);
 			
 			//adjust our two values for checking when we are done finding the subexpression
@@ -311,42 +318,3 @@ class Parser {
 		return new Value(value.value, ValueType.POINTS);
 	}
 }
-
-
-/* Description of how evaluate works - write out then implement
-Start reading the tokens
-You start by expecting one of two possibilities:
-	1. NUMBER
-	2. OPENPARENTHESIS
-	If it isn't one of those two types - error.
-	If open parenthesis 
-		find the closed parenthesis that goes with it (by counting parenthesis tokens) - and call evaluate on that sub expression + EOF
-		that returns a Value. Then, treat that value as if it were a number/unit combination (with possibility of a unit shift following)
-	If a number -
-		treat number as a scalar
-
-Step 2
-	Expecting one of:
-	Units
-	Operation
-	EOF (or other EOF indicator before closed paren)
-	
-	If Units 
-		convert to the units - go to step 2 (but no possibility of units - max 1 is allowed)
-	If EOF/other end of expression (closed paren) - we're done - return the Value(value,type)
-	If operation
-		- we need something to operate by - save the operator and move onto step 3
-		
-Step 3
-	As in step 1 - we're looking for a number or an expression
-		If NUMBER 
-			- treat as scalar - go to step 4
-		IF Expression - eval expression
-			
-Step 4 
-	Check for Units - and convert as necessary
-	
-Step 5 
-	Expected EOF - evaluate the expression and return the value
-	
-*/
