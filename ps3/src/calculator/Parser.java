@@ -180,7 +180,7 @@ class Parser {
 							&& (firstvalue.type!=ValueType.POINTS && secondvalue.type!=ValueType.POINTS)){
 				if (firstvalue.type == ValueType.SCALAR){
 					answervalue = firstvalue.value*PT_PER_IN + secondvalue.value;
-				} else {
+				} else if (secondvalue.type==ValueType.SCALAR){
 					answervalue = firstvalue.value + secondvalue.value*PT_PER_IN;
 				}
 				answer = new Value(answervalue, ValueType.INCHES);	
@@ -200,7 +200,7 @@ class Parser {
 							&& firstvalue.type!=ValueType.POINTS && secondvalue.type!=ValueType.POINTS){
 				if (firstvalue.type == ValueType.SCALAR){
 					answervalue = firstvalue.value*PT_PER_IN - secondvalue.value;
-				} else {
+				} else if (secondvalue.type==ValueType.SCALAR){
 					answervalue = firstvalue.value - secondvalue.value*PT_PER_IN;
 				}
 				answer = new Value(answervalue, ValueType.INCHES);	
@@ -238,6 +238,8 @@ class Parser {
 			if ((firstvalue.type == secondvalue.type) | (firstvalue.type!=ValueType.SCALAR 
 							&& secondvalue.type != ValueType.SCALAR)){
 				answer = new Value(answervalue, ValueType.SCALAR);
+			} else if (firstvalue.type == ValueType.SCALAR && secondvalue.type==ValueType.INCHES){
+				answer = new Value((firstvalue.value*PT_PER_IN*PT_PER_IN)/secondvalue.value, ValueType.INCHES);
 			} else if (firstvalue.type != ValueType.SCALAR){
 				answer = new Value(answervalue, firstvalue.type);
 			} else if (secondvalue.type != ValueType.SCALAR){
