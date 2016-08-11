@@ -26,14 +26,14 @@ public class PianoMachine {
     
     //TODO write method spec
     public void beginNote(Pitch rawPitch) {
-    	midi.beginNote(new Pitch(0).toMidiFrequency());
+    	midi.beginNote(rawPitch.toMidiFrequency());
     	//TODO implement for question 1
 
     }
     
     //TODO write method spec
     public void endNote(Pitch rawPitch) {
-    	midi.endNote(new Pitch(0).toMidiFrequency());
+    	midi.endNote(rawPitch.toMidiFrequency());
     	//TODO implement for question 1
     }
     
